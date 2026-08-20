@@ -11,26 +11,103 @@
 
     <script src="https://unpkg.com/supersimpledev/babel.js"></script>
     <script type="text/babel">
-      function ChatInput(){
-        return(
-          <>
-          <input placeholder="send a message to chatbot " size="30" />
+      function ChatInput({messageChat,setMessageChat}){
+        const [inputText,setInputText]=React.useState(" ");
+        function chanegeInput(event){
+          
+         setInputText(event.target.value)
 
-          <button>Send</button>
+        }
+
+        function sendMessage(){
+          setMessageChat([
+      ...messageChat,
+      {
+        message:inputText,
+        sender:"user",
+        id:crypto.randomUUID()
+      }
+    ])
+            setInputText("")
+        }
+        return(
+          <> 
+          <input placeholder="send a message to chatbot " size="30" onChange={chanegeInput} value={inputText} />
+
+          <button onClick={sendMessage}>Send</button>
           </>
         )
       }
-function ChatMessage(){
-  return(
-    <>
-     
-    </>
+function ChatMessage(props){
+  return(  
+    <div>
+     {props.sender==="user"?(
+     <>
+       {props.message}
+     <img src="user.png" width="50"></img>
+     </>)
+     :
+   ( <>
+     <img src="robot.png" width="50"></img>
+       {props.message}
+       </>)}
+    </div> 
   )
 }
 
 
+function ChatContent({messageChat}) {
+ return(
+ <> 
+ 
+ {messageChat.map((chat)=>{
+    return(
+      <>
+      <ChatMessage message={chat.message} sender={chat.sender} key={chat.id}/>
+      </>
+    )
+  })}
+  </>
+)
+}
+
+
+function App() {
+  const [messageChat,setMessageChat]=React.useState([{
+    message:"Hello chatbot",
+    sender:"user",
+    id:'id1'
+  },
+  {
+    message:"Hello! How can I help you?",
+    sender:"bot",
+    id:'id2'
+  },{
+    message:"can you get me todays date?",
+    sender:"user",
+    id:'id3'
+  },{
+    message:"Today is August 19",
+    sender:"bot",
+    id:'id4'
+  }]);
+  // const [messageChat,setMessageChat] = array
+  // const messageChat=array[0];
+  // const setMessageChat=array[1];
+  return(
+
+    <>
+    <ChatInput messageChat={messageChat} setMessageChat={setMessageChat}/>
+    <ChatContent messageChat={messageChat}/>
+    </>
+  )
+  }
+
+
+
+
       const container = document.querySelector('.js-container');
-      ReactDOM.createRoot(container).render(<ChatInput/>);
+      ReactDOM.createRoot(container).render(<App/>);
     </script>
   </body>
 </html>
